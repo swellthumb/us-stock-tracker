@@ -40,7 +40,27 @@ for ticker in tickers:
         st.caption(f"**Sector**: {info.get('sector', 'N/A')} | **Industry**: {info.get('industry', 'N/A')}")
 
         # Price trend chart
-        st.line_chart(hist["Close"])
+        import plotly.graph_objects as go
+
+candlestick = go.Figure(data=[
+    go.Candlestick(
+        x=hist.index,
+        open=hist["Open"],
+        high=hist["High"],
+        low=hist["Low"],
+        close=hist["Close"],
+        increasing_line_color='green',
+        decreasing_line_color='red'
+    )
+])
+candlestick.update_layout(
+    title=f'{ticker} Candlestick Chart',
+    yaxis_title='Price (USD)',
+    xaxis_rangeslider_visible=False,
+    height=400,
+    margin=dict(t=30, b=30)
+)
+st.plotly_chart(candlestick, use_container_width=True)
 
         # Alerts
         pe = info.get("forwardPE")
