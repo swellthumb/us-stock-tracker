@@ -61,6 +61,11 @@ candlestick.update_layout(
     margin=dict(t=30, b=30)
 )
 st.plotly_chart(candlestick, use_container_width=True)
+st.divider()
+
+    except Exception as e:
+        st.error(f"❌ Error loading {ticker}: {e}")
+
 
         # Alerts
         pe = info.get("forwardPE")
