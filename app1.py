@@ -39,29 +39,38 @@ for ticker in tickers:
         # Sector / Industry
         st.caption(f"**Sector**: {info.get('sector', 'N/A')} | **Industry**: {info.get('industry', 'N/A')}")
 
-        # Price trend chart
+        # Plotly candlestick chart
         import plotly.graph_objects as go
+        candlestick = go.Figure(data=[
+            go.Candlestick(
+                x=hist.index,
+                open=hist["Open"],
+                high=hist["High"],
+                low=hist["Low"],
+                close=hist["Close"],
+                increasing_line_color='green',
+                decreasing_line_color='red'
+            )
+        ])
+        candlestick.update_layout(
+            title=f'{ticker} Candlestick Chart',
+            yaxis_title='Price (USD)',
+            xaxis_rangeslider_visible=False,
+            height=400,
+            margin=dict(t=30, b=30)
+        )
+        st.plotly_chart(candlestick, use_container_width=True)
 
-candlestick = go.Figure(data=[
-    go.Candlestick(
-        x=hist.index,
-        open=hist["Open"],
-        high=hist["High"],
-        low=hist["Low"],
-        close=hist["Close"],
-        increasing_line_color='green',
-        decreasing_line_color='red'
-    )
-])
-candlestick.update_layout(
-    title=f'{ticker} Candlestick Chart',
-    yaxis_title='Price (USD)',
-    xaxis_rangeslider_visible=False,
-    height=400,
-    margin=dict(t=30, b=30)
-)
-st.plotly_chart(candlestick, use_container_width=True)
-st.divider()
+        # Alerts
+        pe = info.get("forwardPE")
+        if pe and pe < 20:
+            st.success(f"Valuation Alert: Forward PE < 20 ({pe:.2f})")
+        elif pe:
+            st.info(f"Forward PE: {pe:.2f}")
+        else:
+            st.warning("No forward PE data available")
+
+        st.divider()
 
     except Exception as e:
         st.error(f"❌ Error loading {ticker}: {e}")
